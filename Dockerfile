@@ -11,7 +11,8 @@ WORKDIR /evolution
 
 COPY ./package.json ./tsconfig.json ./
 
-RUN npm install
+# CAMBIO 1: Arregla el problema de la instalación
+RUN npm install --legacy-peer-deps
 
 COPY ./src ./src
 COPY ./public ./public
@@ -34,7 +35,8 @@ FROM node:20-alpine AS final
 RUN apk update && \
     apk add tzdata ffmpeg bash openssl
 
-ENV TZ=America/Sao_Paulo
+# CAMBIO 2: Ajustada la zona horaria a Europa/Madrid
+ENV TZ=Europe/Madrid
 
 WORKDIR /evolution
 
@@ -55,4 +57,5 @@ ENV DOCKER_ENV=true
 
 EXPOSE 8080
 
+# CAMBIO 3: Arregla el comando de arranque para producción
 ENTRYPOINT ["/bin/bash", "-c", ". ./Docker/scripts/deploy_database.sh && npm run start:prod" ]
